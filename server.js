@@ -48,18 +48,18 @@ function startExpress() {
         if (!payment || !payment.isPaid) {
             res.send({ data: 0 })
         }
-        else res.send({ data: 1 })
+        else {
+
+            Payment.findOneAndUpdate({
+                $and: [
+                    { bridge: bridge },
+                    { vehicleId: vehicleId }
+                ]
+            }, { isPaid: 0 })
+                .then(data => {
+                    res.send({ data: 1 })
+                })
+        }
     })
-    app.get('/markTravelled/:vehicleId/:bridge', async (req, res) => {
-        const { vehicleId, bridge } = req.params
-        Payment.findOneAndUpdate({
-            $and: [
-                { bridge: bridge },
-                { vehicleId: vehicleId }
-            ]
-        }, { isPaid: 1 })
-            .then(data => {
-                res.send({ data: 1 })
-            })
-    })
+
 }
