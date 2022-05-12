@@ -45,7 +45,7 @@ function startExpress() {
                 { vehicleId: vehicleId }
             ]
         }).sort({ time: -1 })
-        if (!payment || !payment.isPaid) {
+        if (!payment.length || !payment[0].isPaid) {
             res.send({ data: 0 })
         }
         else {
