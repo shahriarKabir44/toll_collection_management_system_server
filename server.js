@@ -17,7 +17,8 @@ if (cluster.isMaster) {
         cluster.fork();
     });
 
-} else {
+}
+else {
     startExpress();
 }
 
@@ -27,6 +28,7 @@ function startExpress() {
     app.use(express.json())
     app.listen(process.env.PORT || 3000)
     app.get('/pay/:vehicleId/:bridge', async (req, res) => {
+        console.log("here")
         const { vehicleId, bridge } = req.params
         const newPayment = new Payment({
             bridge: bridge,
@@ -46,17 +48,20 @@ function startExpress() {
             ]
         }).sort({ time: -1 })
         if (!payment.length || !payment[0].isPaid) {
+            console.log({ data: 0 })
             res.send({ data: 0 })
         }
         else {
-
+            console.log(payment[0])
             Payment.findOneAndUpdate({
                 $and: [
                     { bridge: bridge },
-                    { vehicleId: vehicleId }
+                    { vehicleId: vehicleId },
+                    { time: payment[0].time }
                 ]
-            }, { isPaid: 0 })
+            }, { $set: { isPaid: 0 } })
                 .then(data => {
+                    console.log({ data: 1 })
                     res.send({ data: 1 })
                 })
         }
